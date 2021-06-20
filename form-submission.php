@@ -6,38 +6,120 @@
         <h1>Registration form</h1>
     </head>
     <body>
-        <form action="php-validation.php"
+
+    <?php
+            define("filepath", "data.txt");
+
+            $fname= $lname= $gender = $dob = $religion = $email = $useName = $password = "";
+            $fnameErr= $lnameErr = $genderErr = $dobErr = $religionErr = $emailErr = $userNameErr = $passwordErr = "";
+            $successMessage = $errorMessage ="";
+            $flag = false;
+            if($_SERVER['REQUEST_METHOD'] === "POST"){
+                $userName = $_POST['userName'];
+                $password = $_POST['password'];
+
+                if(empty($userName)) {
+                    $userNameErr = "User name cannot be empty!";
+                    $flag = true;
+                }
+                if(empty($password)){
+                    $passwordErr = "password cannot be empty!";
+                    $flag = true;
+                }
+                
+                if(empty($fname)){
+                    $fnameErr = "First name cannot be empty!";
+                    $flag = true;
+                }
+
+                if(empty($lname)){
+                    $lnameErr = "Last name cannot be empty!";
+                    $flag = true;
+                }
+
+                if(empty($gender)){
+                    $genderErr = "gender cannot be empty!";
+                    $flag = true;
+                }
+
+                if(empty($dob)){
+                    $dobErr = "Date of birth cannot be empty!";
+                    $flag = true;
+                }
+
+                if(empty($religion)){
+                    $religionErr = "password cannot be empty!";
+                    $flag = true;
+                }
+
+                if(empty($email)){
+                    $emailErr = "email cannot be empty!";
+                    $flag = true;
+                }
+
+                if(!$flag){
+                    $fname = test_input($fname);
+                    $lname = test_input($lname);
+                    $gender = test_input($gender);
+                    $dob = test_input($dob);
+                    $religion = test_input($religion);
+                    $email = test_input($email);
+                    $userName = test_input($userName);
+                    $password = test_input($password);
+                    $data = $fname . "," . $lname . "," . $gender . "," . $dob . "," . $religion . "," . $email . "," . $userName . "," . $password;
+                    $result1 = write($data);
+                    if($result1) {
+                        $successMessage = "Successfully saved.";
+                    }
+                    else{
+                        $errorMessage = "Error while saving!";
+                    }
+                    
+                }
+            }
+
+            function write($content){
+                $resource = fopen(filepath, "a");
+                $fw = fwrite($resource, $content."
+            \n");
+            fclose($resource);
+             return $fw;
+            }
+
+
+            function test_input($data) {
+                $data = trim($data);
+                $data = stripcslashes($data);
+                $data = htmlspecialchars($data);
+                return $data;
+            }
+        ?>
+
+
+        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"
         method="POST">
         <fieldset>
             <legend>Basic Information</legend>
             <label for="fname">First Name:</label>
-            <input type="text" id="fname" name="fname" value="<?php echo htmlspecialchars($firstName)?>"> <br><br>
-            <?php if(isset($firstName_error)){ ?>
-                <p><?php echo $firstName_error ?></p>
-                
-            <?php } ?>
+            <input type="text" id="fname" name="fname" > 
+            <span style = "color : red;"><?php echo $fnameErr;?></span><br><br>
+           
             <label for="lname">Last Name:</label>
-            <input type="text" id="lname" name="lname" value="<?php echo htmlspecialchars($lastName)?>"> <br><br>
-            <?php if(isset($lastName_error)){ ?>
-                <p><?php echo $lastName_error ?></p>
-                
-            <?php } ?>
+            <input type="text" id="lname" name="lname" > 
+            <span style = "color : red;"><?php echo $lnameErr;?></span> <br><br>
+          
             <label for="gender">Gender:</label>
             <input type="radio" id="male" name="male" value="male">
             <label for="male">Male</label>
             <input type="radio" id="female" name="female" value="female">
-            <label for="female">Female</label><br><br>
-            <?php if(isset($gender_error)){ ?>
-                <p><?php echo $gender_error ?></p>
-                
-            <?php } ?>
+            <label for="female">Female</label>
+            <span style = "color : red;"><?php echo $genderErr;?></span><br><br>
+           
             <label for="dob">Date of birth:</label>
-            <input type="date" id="dob" name="dob"><br> <br>
+            <input type="date" id="dob" name="dob">
+            <span style = "color : red;"><?php echo $dobErr;?></span><br> <br>
 
-            <?php if(isset($dob_error)){ ?>
-                <p><?php echo $dob_error ?></p>
-                
-            <?php } ?>
+          
 
             <label for="religion">Religion:</label>
             <select name="religion" id="religion">
@@ -46,10 +128,8 @@
                 <option value="christianity">Christianity</option>
                 <option value="buddhism">Buddhism</option>
             </select>
-            <?php if(isset($religion_error)){ ?>
-                <p><?php echo $religion_error ?></p>
-                
-            <?php } ?>
+            <span style = "color : red;"><?php echo $religionErr;?></span>
+        
 
         </fieldset>
 
@@ -62,12 +142,10 @@
             <label for="phone">Phone:</label>
             <input type="tel" id="phone" name="phone"> <br> <br>
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($email)?>"> <br> <br>
+            <input type="email" id="email" name="email" > 
+            <span style = "color : red;"><?php echo $emailErr;?></span><br> <br>
 
-            <?php if(isset($email_error)){ ?>
-                <p><?php echo $email_error ?></p>
-                
-            <?php } ?>
+           
 
             <label for="website">Personal Website Link</label>
             <input type="url" id="website" name="website">
@@ -76,24 +154,20 @@
         <fieldset>
         <legend>Account Information</legend>
         <label for="userName">Username:</label>
-        <input type="text" id="userName" name="userName" value="<?php echo htmlspecialchars($username)?>"> <br><br>
+        <input type="text" id="userName" name="userName" > 
+        <span style = "color : red;"><?php echo $userNameErr;?></span><br><br>
 
-        <?php if(isset($username_error)){ ?>
-                <p><?php echo $username_error ?></p>
-                
-            <?php } ?>
+        
 
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" value="<?php echo htmlspecialchars($password)?>"> <br><br>
-
-        <?php if(isset($password_error)){ ?>
-                <p><?php echo $password_error ?></p>
-                
-            <?php } ?>
+        <input type="password" id="password" name="password" > 
+        <span style = "color : red;"><?php echo $passwordErr;?></span><br><br>
 
         </fieldset>
 
         <input class="register_button" type="submit" value="REGISTER">
     </form>
+        <span style = "color : green"><?php echo $successMessage; ?> </span> 
+        <span style = "color : red"><?php echo $errorMessage; ?> </span>
     </body>
 </html> 
